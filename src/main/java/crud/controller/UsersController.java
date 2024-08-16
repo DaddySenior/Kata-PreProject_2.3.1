@@ -1,11 +1,15 @@
 package crud.controller;
 
+import crud.model.User;
+import crud.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
 
 
 ////1. Написать CRUD-приложение. Использовать Spring MVC + Hibernate.
@@ -18,24 +22,89 @@ import java.util.List;
 //// использоваться EntityManager.
 ////6. Используйте только GET/POST маппинги
 ////7. Используйте ReqestParam аннотацию, использование аннотации PathVariable запрещено
-//
+
 @Controller
+@RequestMapping("/people")
 public class UsersController {
 
-    @GetMapping("/")
-    public String getUsers() {
-        return "users1";
+    private final UserService userService;
+
+    @Autowired
+    public UsersController(UserService userService) {
+        this.userService = userService;
     }
+
+    @GetMapping
+    public String index(ModelMap model) {
+        model.addAttribute("users", userService.getAllUsers());
+        return "/index";
+    }
+
+    @GetMapping("/{id}")
+    public String show(@PathVariable("id") int id, Model model) {
+        model.addAttribute("user", userService.getUserById(id));
+        return "/show";
+    }
+
+    @GetMapping("/new")
+    public String newUser(ModelMap model) {
+        model.addAttribute("user", new User());
+        return "new";
+    }
+
+//    @PostMapping()
+//    public String create(@RequestParam("name") String name, @RequestParam("surname") String surname,
+//                         @RequestParam("age") int age,@Valid Model model, BindingResult bindingResult) {
+//        if(bindingResult.hasErrors()) {
+//            return "new";
+//        }
+//        User user = new User();
+//        user.setName(name);
+//        user.setSurname(surname);
+//        user.setAge(age);
+//        userService.saveUser(user);
+//        return "redirect:/people";
+//    }
+
+    @PostMapping
+    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "new";
+        }
+        userService.saveUser(user);
+        return "redirect:/people";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String edit(@PathVariable("id") int id, Model model) {
+        model.addAttribute("user", userService.getUserById(id));
+        return "edit";
+    }
+
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") int id) {
+        if(bindingResult.hasErrors()) {
+            return "edit";
+        }
+        userService.updateUser(user);
+        return "redirect:/people";
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") int id) {
+        userService.deleteUser(id);
+        return "redirect:/people";
+    }
+
+    //Если не можете понять как получить параметр id из каждой строки таблицы, можно это сделать в кнопке
+    // th:href="@{/users/edit(id=${u.getId()})}".
+    //после нажатия она перенаправит на на адрес с параметром id:  "/users/edit?id=1", там уже через
+    // @RequestParam сможете вытащить параметр id (без использования @PathVariable)
+
 }
 
-//        @GetMapping("/cars")
-//        public String printCars(@RequestParam(value = "count", defaultValue = "5") int count, Model model) {
-//
-//            CarService carService = new CarServiceImp();
-//            List<Car> result = carService.getAmountOfCars(count);
-//            model.addAttribute("result", result);
-//            return "cars";
-//        }
+
+
 
 
 

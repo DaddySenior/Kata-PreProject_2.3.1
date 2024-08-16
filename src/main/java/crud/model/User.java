@@ -1,22 +1,53 @@
 package crud.model;
 
+
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
+
+@Entity
+@Table(name = "users")
 public class User {
-    public int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @NotEmpty(message = "Введите имя")
+    @Size(min =2, max = 30, message = "Имя должно быть длинной от 2 до 30 символов")
+    @Column
     private String name;
+
+    @NotEmpty(message = "Введите фамилию")
+    @Size(min =2, max = 30, message = "Фамилия должно быть длинной от 2 до 30 символов")
+    @Column
     private String surname;
+
+    @Min(value = 1, message = "Возраст должен быть больше чем 0")
+    @Column
     private int age;
 
-    public User(int id, String name, String surname, int age) {
-        this.id = id;
+    public User(String name, String surname, int age) {
         this.name = name;
         this.surname = surname;
         this.age = age;
     }
 
-    public User (){
+    public User() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -58,7 +89,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && age == user.age && Objects.equals(name, user.name) && Objects.equals(surname, user.surname);
+        return age == user.age && Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(surname, user.surname);
     }
 
     @Override
