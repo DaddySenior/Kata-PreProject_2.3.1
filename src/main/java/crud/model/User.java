@@ -1,8 +1,6 @@
 package crud.model;
 
 
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
-
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -19,12 +17,12 @@ public class User {
     private int id;
 
     @NotEmpty(message = "Введите имя")
-    @Size(min =2, max = 30, message = "Имя должно быть длинной от 2 до 30 символов")
+    @Size(min = 2, max = 30, message = "Имя должно быть длинной от 2 до 30 символов")
     @Column
     private String name;
 
     @NotEmpty(message = "Введите фамилию")
-    @Size(min =2, max = 30, message = "Фамилия должно быть длинной от 2 до 30 символов")
+    @Size(min = 2, max = 30, message = "Фамилия должно быть длинной от 2 до 30 символов")
     @Column
     private String surname;
 

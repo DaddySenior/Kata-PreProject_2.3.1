@@ -16,6 +16,8 @@
         <thymeleaf-spring5>3.0.14.RELEASE</thymeleaf-spring5>
         <hibernate.version>5.6.3.Final</hibernate.version>
         <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
+        <spring-data-jpa.version>2.4.7</spring-data-jpa.version>
+        <hibernate-validator.version>6.0.23.Final</hibernate-validator.version>
 
     </properties>
 
@@ -61,13 +63,13 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>2.4.7</version>
+            <version>${spring-data-jpa.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>6.0.23.Final</version>
+            <version>${hibernate-validator.version}</version>
         </dependency>
 
     </dependencies>
