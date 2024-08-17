@@ -3,14 +3,11 @@
       lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>New User</title>
+    <title>Новый пользователь</title>
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/people/update}" th:object="${user}">
-    <label for="id">ID: </label>
-    <input type="text" th:field="*{id}" id="id"/>
-    <br/>
+<form th:method="PATCH" th:action="@{/people/{id}(id=${user.getId})}" th:object="${user}">
     <label for="name">Введите имя: </label>
     <input type="text" th:field="*{name}" id="name"/>
     <div style="color: red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">name error</div>
@@ -23,7 +20,7 @@
     <input type="text" th:field="*{age}" id="age"/>
     <div style="color: red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">age error</div>
     <br/>
-    <input type="submit" value="Update"/>
+    <input type="submit" value="Создать"/>
 </form>
 
 </body>

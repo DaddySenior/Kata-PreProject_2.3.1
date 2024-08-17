@@ -5,7 +5,6 @@ import crud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,22 +34,76 @@ public class UsersController {
     }
 
     @GetMapping
-    public String index(ModelMap model) {
+    public String index(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "/index";
-    }
-
-    @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "/show";
+        return "index";
     }
 
     @GetMapping("/new")
-    public String newUser(ModelMap model) {
+    public String newUser(Model model) {
         model.addAttribute("user", new User());
         return "new";
     }
+
+    @PostMapping
+    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "new";
+        }
+        userService.saveUser(user);
+        return "redirect:/people";
+    }
+
+    @GetMapping("/edit")
+    public String editUser(@RequestParam("id") int id, Model model) {
+        model.addAttribute(userService.getUserById(id));
+        return "edit";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                         @RequestParam("id") int id) {
+        if (bindingResult.hasErrors()) {
+            return "edit";
+        }
+        userService.updateUser(user);
+        return "redirect:/people";
+    }
+
+
+    @PostMapping("/delete")
+    public String delete(@RequestParam(value = "id", required = true) int id) {
+        userService.deleteUser(id);
+        return "redirect:/people";
+    }
+}
+
+
+//    @DeleteMapping("/{id}")
+//    public String delete(@PathVariable("id") int id) {
+//        userService.deleteUser(id);
+//        return "redirect:/people";
+//    }
+
+//    @GetMapping("/{id}/edit")
+//    public String edit(@PathVariable("id") int id, Model model) {
+//        model.addAttribute("user", userService.getUserById(id));
+//        return "edit";
+//    }
+//
+//    @PatchMapping("/{id}")
+//    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") int id) {
+//        if(bindingResult.hasErrors()) {
+//            return "edit";
+//        }
+//        userService.updateUser(user);
+//        return "redirect:/people";
+//    }
+
+//    @GetMapping("/{id}")
+//    public String show(@PathVariable("id") int id, Model model) {
+//        model.addAttribute("user", userService.getUserById(id));
+//        return "/show";
 
 //    @PostMapping()
 //    public String create(@RequestParam("name") String name, @RequestParam("surname") String surname,
@@ -66,42 +119,10 @@ public class UsersController {
 //        return "redirect:/people";
 //    }
 
-    @PostMapping
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "new";
-        }
-        userService.saveUser(user);
-        return "redirect:/people";
-    }
 
-    @GetMapping("/{id}/edit")
-    public String edit(@PathVariable("id") int id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "edit";
-    }
 
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") int id) {
-        if(bindingResult.hasErrors()) {
-            return "edit";
-        }
-        userService.updateUser(user);
-        return "redirect:/people";
-    }
 
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-        userService.deleteUser(id);
-        return "redirect:/people";
-    }
 
-    //Если не можете понять как получить параметр id из каждой строки таблицы, можно это сделать в кнопке
-    // th:href="@{/users/edit(id=${u.getId()})}".
-    //после нажатия она перенаправит на на адрес с параметром id:  "/users/edit?id=1", там уже через
-    // @RequestParam сможете вытащить параметр id (без использования @PathVariable)
-
-}
 
 
 
